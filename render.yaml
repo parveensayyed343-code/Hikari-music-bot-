@@ -1,0 +1,16 @@
+services:
+  - type: worker
+    name: telegram-music-bot
+    env: python
+    buildCommand: "bash build.sh"
+    startCommand: "python bot.py"
+    envVars:
+      - key: API_ID
+        sync: false
+      - key: API_HASH
+        sync: false
+      - key: BOT_TOKEN
+        sync: false
+      - key: MAX_QUEUE_SIZE
+        value: "20"
+    autoDeploy: true
