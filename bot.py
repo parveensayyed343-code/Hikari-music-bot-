@@ -3,8 +3,7 @@ import asyncio
 import logging
 from aiohttp import web
 from pytgcalls import PyTgCalls
-from pytgcalls.types import Update
-from pytgcalls import MediaStream
+from pytgcalls.types import AudioPiped
 from pytgcalls.exceptions import NoActiveGroupCall
 from pyrogram import Client, filters
 from pyrogram.types import Message
@@ -86,10 +85,7 @@ async def start_playing(chat_id: int, message: Message, status_msg=None):
     if not track:
         return
     try:
-        audio_stream = MediaStream(
-            track["url"],
-            additional_ffmpeg_parameters="-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5"
-        )
+        audio_stream = AudioPiped(track["url"])
         if queue.is_playing(chat_id):
             await call_py.change_stream(chat_id, audio_stream)
         else:
@@ -199,10 +195,7 @@ async def stream_ended(_, update):
     next_track = queue.current(chat_id)
     if next_track:
         try:
-            audio_stream = MediaStream(
-                next_track["url"],
-                additional_ffmpeg_parameters="-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5"
-            )
+            audio_stream = AudioPiped(next_track["url"])
             await call_py.change_stream(chat_id, audio_stream)
             logger.info(f"Auto-playing next: {next_track['title']}")
         except Exception as e:
