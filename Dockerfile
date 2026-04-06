@@ -18,3 +18,5 @@ RUN pip install --no-cache-dir --upgrade pip && \
 COPY . .
 
 CMD ["python", "bot.py"]
+
+RUN pip install --upgrade pip setuptools wheel
