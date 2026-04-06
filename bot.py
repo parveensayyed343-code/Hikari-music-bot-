@@ -1,9 +1,10 @@
-import os
+
+ import os
 import asyncio
 import logging
 from pytgcalls import PyTgCalls
-from pytgcalls.types import AudioPiped, AudioVideoPiped
-from pytgcalls.types.input_stream import InputAudioStream
+from pytgcalls.types import Update
+from pytgcalls import MediaStream
 from pytgcalls.exceptions import NoActiveGroupCall
 from pyrogram import Client, filters
 from pyrogram.types import Message
@@ -97,7 +98,7 @@ async def start_playing(chat_id: int, message: Message, status_msg=None):
         return
 
     try:
-        audio_stream = AudioPiped(
+        audio_stream = MediaStream(
             track["url"],
             additional_ffmpeg_parameters="-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5"
         )
@@ -232,7 +233,7 @@ async def stream_ended(_, update):
 
     if next_track:
         try:
-            audio_stream = AudioPiped(
+            audio_stream = MediaStream(
                 next_track["url"],
                 additional_ffmpeg_parameters="-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5"
             )
