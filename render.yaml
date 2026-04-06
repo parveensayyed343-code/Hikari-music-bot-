@@ -1,5 +1,5 @@
 services:
-  - type: worker
+  - type: webservice 
     name: telegram-music-bot
     env: python
     buildCommand: "bash build.sh"
