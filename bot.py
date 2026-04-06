@@ -2,6 +2,7 @@
  import os
 import asyncio
 import logging
+from aiohttp import web
 from pytgcalls import PyTgCalls
 from pytgcalls.types import Update
 from pytgcalls import MediaStream
@@ -251,8 +252,24 @@ async def stream_ended(_, update):
         logger.info(f"Queue finished for chat {chat_id}")
 
 
+# ───────────────────────── Health check server ─────────────────────────────
+async def health(request):
+    return web.Response(text="Bot is running!")
+
+async def start_health_server():
+    app_web = web.Application()
+    app_web.router.add_get("/", health)
+    runner = web.AppRunner(app_web)
+    await runner.setup()
+    port = int(os.environ.get("PORT", 8080))
+    site = web.TCPSite(runner, "0.0.0.0", port)
+    await site.start()
+    logger.info(f"Health server running on port {port}")
+
+
 # ───────────────────────────── Entry point ─────────────────────────────────
 async def main():
+    await start_health_server()
     await app.start()
     await call_py.start()
     logger.info("🎵 Music Bot is running...")
